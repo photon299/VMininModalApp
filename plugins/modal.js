@@ -54,6 +54,7 @@ $.modal = (options) => {
             setTimeout(() => {
                 $modal.classList.remove("hide");
                 closing = false;
+                if (typeof options.onClose === "function") options.onClose();
             }, ANIMATION_SPEED);
         },
     }
@@ -69,62 +70,4 @@ $.modal = (options) => {
         },
         setContent(html) { $modal.querySelector("[data-content]").innerHTML = html }
     });
-};
-
-$.card = (fruits) => {
-    const row = document.createElement("div");
-    row.classList.add("row");
-    fruits.forEach(fruit => {
-        row.innerHTML += `
-            <div class="col">
-                <div id="${fruit.id}" class="card">
-                    <img style="height: 300px; width: 300px;" src="${fruit.img}">
-                    <div class="card-body">
-                    <h5 class="card-title">${fruit.title}</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <a href="#" class="btn btn-primary look">Посмотреть цену</a>
-                    <a href="#" class="btn btn-danger delete">Удалить</a>
-                    </div>
-                </div>
-            </div>`
-    });
-    
-    const makeModal = (title, card = false,) => { //buttons = []
-        const modal = $.modal({
-            title: title, 
-            closeble: true,
-            content: "",
-            width: "400px",
-            footerButtons: [
-                {
-                    text: "Ok",
-                    type: "primary",
-                    handler() {
-                        if (card) card.parentElement.remove();
-                        modal.close();
-                    },
-                },
-                {
-                    text: "Cancel",
-                    type: "danger",
-                    handler() {
-                        modal.close();
-                    },
-                }
-            ],
-        });
-        return modal;
-    }
-
-    row.addEventListener("click", (event) => {
-        const card = event.target.parentElement.parentElement;
-        if (event.target.matches(".btn-primary")) {
-            const modal = makeModal(`Цена на ${fruits[card.id - 1].title}: ${fruits[card.id - 1].price}`);
-            modal.open();
-        } else if (event.target.matches(".btn-danger")) {
-            const cardModal = makeModal(`Удалить карточку?`, card);
-            cardModal.open();
-        }
-    });
-    document.querySelector(".container").append(row);
 };
